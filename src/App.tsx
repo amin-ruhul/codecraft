@@ -1,6 +1,7 @@
 import PlayButton from "./components/ui/PlayButton";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
+import CodeEditor from "./components/Editor";
 
 function App() {
   return (
@@ -14,7 +15,9 @@ function App() {
         </div>
         <div className="w-full h-[92%] bg-slate-400 rounded">
           <Allotment>
-            <div>1</div>
+            <div>
+              <CodeEditor />
+            </div>
             <div>
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta
               quis modi, voluptate nostrum aspernatur ab, delectus, eos sunt
