@@ -20,7 +20,7 @@ function LanguageSelector({
 }: LanguageSelectorProps) {
   return (
     <Select onValueChange={(value) => onValueChange(value)}>
-      <SelectTrigger className="w-[180px] bg-[#1E1E1E]  text-slate-300 border border-green-600/20 capitalize">
+      <SelectTrigger className="w-[180px] bg-[#1E1E1E]  text-slate-300 border border-green-600/20 capitalize outline-none focus:border-none">
         <SelectValue placeholder={selectedLanguage} />
       </SelectTrigger>
       <SelectContent className="bg-[#1E1E1E] text-slate-300 border-green-600/20">

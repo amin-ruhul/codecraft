@@ -13,7 +13,7 @@ function App() {
 
           <div></div>
         </div>
-        <div className="w-full h-[92%] bg-slate-400 rounded">
+        <div className="w-full h-[92%] bg-[#1E1E1E]  rounded">
           <Allotment>
             <div>
               <CodeEditor />

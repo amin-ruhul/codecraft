@@ -2,12 +2,15 @@ import { Editor } from "@monaco-editor/react";
 import { useRef, useState } from "react";
 import * as monaco from "monaco-editor";
 import LanguageSelector from "../ui/LanguageSelector";
-import { LANGUAGES } from "@/constants";
+import { LANGUAGES, CODE_SNIPPETS } from "@/constants";
 
 function CodeEditor() {
+  type LanguageKeys = keyof typeof CODE_SNIPPETS;
+
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [code, setCode] = useState<string | undefined>();
-  const [selectedLanguage, setSelectedLanguage] = useState("Javascript");
+  const [selectedLanguage, setSelectedLanguage] =
+    useState<LanguageKeys>("javascript");
 
   const onMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
@@ -15,8 +18,9 @@ function CodeEditor() {
   };
   console.log(Object.entries(LANGUAGES));
 
-  function handleLanguageChange(value: string) {
+  function handleLanguageChange(value: LanguageKeys) {
     setSelectedLanguage(value);
+    setCode(CODE_SNIPPETS[value]);
   }
 
   return (
@@ -25,15 +29,17 @@ function CodeEditor() {
         <LanguageSelector
           languages={Object.entries(LANGUAGES)}
           selectedLanguage={selectedLanguage}
-          onValueChange={(value: string) => handleLanguageChange(value)}
+          onValueChange={(value: string) =>
+            handleLanguageChange(value as LanguageKeys)
+          }
         />
       </div>
       <Editor
         className=" rounded-md"
         height="92vh"
-        defaultLanguage="javascript"
+        language={selectedLanguage}
         theme="vs-dark"
-        defaultValue="// some comment"
+        defaultValue={CODE_SNIPPETS[selectedLanguage]}
         value={code}
         onChange={(value) => setCode(value)}
         onMount={onMount}
