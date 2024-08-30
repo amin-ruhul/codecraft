@@ -1,4 +1,4 @@
-export const LANGUAGE = {
+export const LANGUAGES = {
   typescript: "5.0.3",
   javascript: "18.15.0",
   c: "10.2.0",
