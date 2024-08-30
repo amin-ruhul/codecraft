@@ -1,11 +1,11 @@
 import { Button } from "./button";
 import { Play } from "lucide-react";
 
-type PlayButtonProps = {
+type RunButtonProps = {
   onClick: () => void;
 };
 
-function PlayButton({ onClick }: PlayButtonProps) {
+function RunButton({ onClick }: RunButtonProps) {
   return (
     <Button
       variant="run"
@@ -18,4 +18,4 @@ function PlayButton({ onClick }: PlayButtonProps) {
   );
 }
 
-export default PlayButton;
+export default RunButton;
