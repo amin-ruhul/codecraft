@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type LanguageSelectorProps = {
+export type LanguageSelectorProps = {
   languages: [string, string][];
   onValueChange: (value: string) => void;
   selectedLanguage: string;
@@ -20,10 +20,10 @@ function LanguageSelector({
 }: LanguageSelectorProps) {
   return (
     <Select onValueChange={(value) => onValueChange(value)}>
-      <SelectTrigger className="w-[180px] bg-[#1E1E1E]  text-slate-300 border border-green-600/20 capitalize outline-none focus:border-none">
+      <SelectTrigger className="w-[180px]">
         <SelectValue placeholder={selectedLanguage} />
       </SelectTrigger>
-      <SelectContent className="bg-[#1E1E1E] text-slate-300 border-green-600/20">
+      <SelectContent>
         <SelectGroup>
           {languages.map(([language, version]) => (
             <SelectItem value={language} key={language} className="capitalize">

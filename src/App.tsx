@@ -1,11 +1,14 @@
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
-import CodeEditor from "./components/Editor";
 import { useRef, useState } from "react";
 import * as monaco from "monaco-editor";
 import { LANGUAGES, CODE_SNIPPETS } from "@/constants";
-import ToolBar from "./components/Toolbar";
 import useCodeExecution from "./hooks/useCodeExecution";
+import Header from "./components/Heaader";
+import Sidebar from "./components/Sidebar";
+import CodePanel from "./components/CodePanel";
+import OutputPanel from "./components/OutputPanel";
+import Footer from "./components/Footer";
 
 export type LanguageKeys = keyof typeof CODE_SNIPPETS;
 
@@ -33,39 +36,41 @@ function App() {
     });
   }
 
+  const [theme, setTheme] = useState("dark");
+
   return (
     <>
-      <main className="w-full h-screen px-4">
-        <div className="py-2 flex items-center justify-between">
-          <div></div>
+      <main className={`flex h-screen ${theme === "dark" ? "dark" : ""}`}>
+        <div className="flex-1 flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-200">
+          <Header
+            theme={theme}
+            onThemeChange={() => setTheme(theme === "dark" ? "light" : "dark")}
+            languages={Object.entries(LANGUAGES)}
+            selectedLanguage={selectedLanguage}
+            onValueChange={(value: string) =>
+              handleLanguageChange(value as LanguageKeys)
+            }
+          />
+          <div className="flex-1 flex p-4 space-x-4 overflow-hidden">
+            <Sidebar />
 
-          <div></div>
-        </div>
-        <div className="w-full h-[92%] bg-[#1E1E1E]  rounded">
-          <Allotment>
-            <section>
-              <ToolBar
-                languages={Object.entries(LANGUAGES)}
-                selectedLanguage={selectedLanguage}
-                onValueChange={(value: string) =>
-                  handleLanguageChange(value as LanguageKeys)
-                }
-                onExecute={handleCodeExecution}
-              />
-              <CodeEditor
-                editorRef={editorRef}
-                code={code}
-                selectedLanguage={selectedLanguage}
-                defaultValue={CODE_SNIPPETS[selectedLanguage]}
-                onChange={(value) => setCode(value)}
-              />
-            </section>
-            <section className=" text-[#CCF9FC] py-6 px-2 text-sm">
-              {output.length > 0
-                ? output.map((line, i) => <p key={i}>{line}</p>)
-                : 'Click "Run Code" to see the output here'}
-            </section>
-          </Allotment>
+            <Allotment>
+              <Allotment.Pane preferredSize="60%">
+                <CodePanel
+                  editorRef={editorRef}
+                  code={code}
+                  selectedLanguage={selectedLanguage}
+                  defaultValue={CODE_SNIPPETS[selectedLanguage]}
+                  onChange={(value) => setCode(value)}
+                  theme={theme === "dark" ? "vs-dark" : "light"}
+                />
+              </Allotment.Pane>
+              <Allotment.Pane snap preferredSize="30%">
+                <OutputPanel output={output} onEducate={handleCodeExecution} />
+              </Allotment.Pane>
+            </Allotment>
+          </div>
+          <Footer />
         </div>
       </main>
     </>

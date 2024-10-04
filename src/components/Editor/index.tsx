@@ -3,12 +3,13 @@ import * as monaco from "monaco-editor";
 
 import { type LanguageKeys } from "@/App";
 
-type CodeEditorProps = {
+export type CodeEditorProps = {
   editorRef: React.MutableRefObject<monaco.editor.IStandaloneCodeEditor | null>;
   code: string | undefined;
   selectedLanguage: LanguageKeys;
   defaultValue: string;
   onChange: (value: string | undefined) => void;
+  theme?: "vs-dark" | "light";
 };
 
 function CodeEditor({
@@ -17,6 +18,7 @@ function CodeEditor({
   selectedLanguage,
   defaultValue,
   onChange,
+  theme = "vs-dark",
 }: CodeEditorProps) {
   const onMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
@@ -28,11 +30,14 @@ function CodeEditor({
       <Editor
         height="92vh"
         language={selectedLanguage}
-        theme="vs-dark"
+        theme={theme}
         defaultValue={defaultValue}
         value={code}
         onChange={(value) => onChange(value)}
         onMount={onMount}
+        options={{
+          fontSize: 17,
+        }}
       />
     </>
   );
