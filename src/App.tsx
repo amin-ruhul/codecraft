@@ -1,6 +1,6 @@
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as monaco from "monaco-editor";
 import { LANGUAGES, CODE_SNIPPETS } from "@/constants";
 import useCodeExecution from "./hooks/useCodeExecution";
@@ -9,10 +9,13 @@ import Sidebar from "./components/Sidebar";
 import CodePanel from "./components/CodePanel";
 import OutputPanel from "./components/OutputPanel";
 import Footer from "./components/Footer";
+import { initSocket } from "./services/socket";
+import { Socket } from "socket.io-client";
 
 export type LanguageKeys = keyof typeof CODE_SNIPPETS;
 
 function App() {
+  const [theme, setTheme] = useState("dark");
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [code, setCode] = useState<string | undefined>(
     CODE_SNIPPETS["javascript"]
@@ -21,6 +24,50 @@ function App() {
     useState<LanguageKeys>("javascript");
 
   const { output, execute } = useCodeExecution();
+
+  const socketRef = useRef<Socket | null>(null);
+
+  function generateRandomName() {
+    const letters = "abcdefghijklmnopqrstuvwxyz";
+    const nameLength = Math.floor(Math.random() * 3) + 3;
+    let name = "";
+
+    for (let i = 0; i < nameLength; i++) {
+      const randomIndex = Math.floor(Math.random() * letters.length);
+      name += letters[randomIndex];
+    }
+
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }
+
+  useEffect(() => {
+    async function handleSocketConnection() {
+      socketRef.current = await initSocket();
+      const socketClient = socketRef.current;
+      if (!socketClient) return;
+
+      socketClient.emit("join-request", {
+        roomId: 12345678,
+        user: generateRandomName(),
+      });
+
+      socketClient.on("joined", (data) => {
+        console.log("joined", data);
+
+        console.log(`${data.user} has joined the room ${data.roomId}`);
+      });
+    }
+
+    handleSocketConnection();
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("join-request");
+        socketRef.current.off("joined");
+        socketRef.current.disconnect();
+      }
+    };
+  }, []);
 
   function handleLanguageChange(value: LanguageKeys) {
     setSelectedLanguage(value);
@@ -35,8 +82,6 @@ function App() {
       code,
     });
   }
-
-  const [theme, setTheme] = useState("dark");
 
   return (
     <>
