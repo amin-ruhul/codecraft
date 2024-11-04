@@ -1,8 +1,7 @@
 import { Editor } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 
-import { type LanguageKeys } from "@/App";
-import { useEditorSettingStore } from "@/store/editorSetting";
+import { LanguageKeys, useEditorStore } from "@/store/editorStore";
 
 export type CodeEditorProps = {
   editorRef: React.MutableRefObject<monaco.editor.IStandaloneCodeEditor | null>;
@@ -21,7 +20,7 @@ function CodeEditor({
   onChange,
   theme = "vs-dark",
 }: CodeEditorProps) {
-  const { fontSize, cursorStyle } = useEditorSettingStore();
+  const { settings } = useEditorStore();
 
   const onMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
@@ -39,9 +38,7 @@ function CodeEditor({
         onChange={(value) => onChange(value)}
         onMount={onMount}
         options={{
-          fontSize: fontSize,
-          cursorStyle: cursorStyle,
-          formatOnPaste: true,
+          ...settings,
         }}
       />
     </>

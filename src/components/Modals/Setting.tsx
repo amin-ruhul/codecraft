@@ -10,23 +10,20 @@ import {
   SelectItem,
 } from "../ui/select";
 import {
-  useEditorSettingStore,
   CursorStyle,
-  WordWrap,
+  useEditorStore,
   WordBreak,
-} from "@/store/editorSetting";
+  WordWrap,
+} from "@/store/editorStore";
 
 function Setting() {
   const {
-    fontSize,
+    settings: { fontSize, cursorStyle, wordWrap, wordBreak },
     setFontSize,
-    cursorStyle,
     setCursorStyle,
-    wordWrap,
     setWordWrap,
-    wordBreak,
     setWordBreak,
-  } = useEditorSettingStore();
+  } = useEditorStore();
 
   return (
     <Modal>
