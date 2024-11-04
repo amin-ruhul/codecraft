@@ -2,12 +2,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Home() {
   const navigate = useNavigate();
-
-  const [roomId, setRoomId] = useState("");
+  const [searchParams] = useSearchParams();
+  const [roomId, setRoomId] = useState(searchParams.get("roomId") || "");
   const [name, setName] = useState("");
 
   const handleJoin = () => {

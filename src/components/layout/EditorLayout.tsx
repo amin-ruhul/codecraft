@@ -7,20 +7,24 @@ import Sidebar from "@/components/Sidebar";
 
 import { initSocket } from "@/services/socket";
 import { Socket } from "socket.io-client";
-import { generateRandomName } from "@/lib/utils";
 import toast from "react-hot-toast";
 import Footer from "@/components/Footer";
 import { useThemeStore } from "@/store/themeStore";
 export type LanguageKeys = keyof typeof CODE_SNIPPETS;
 import { useEditorStore } from "@/store/editorStore";
 
+import { useLocation, Navigate, useParams } from "react-router-dom";
+
 function EditorLayout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const { roomId } = useParams();
   const theme = useThemeStore((state) => state.theme);
   const setTheme = useThemeStore((state) => state.setTheme);
 
   const { selectedLanguage, setSelectedLanguage } = useEditorStore();
 
   const socketRef = useRef<Socket | null>(null);
+  const name = location.state?.name;
 
   function handleError(error: string) {
     toast.error(error);
@@ -36,8 +40,8 @@ function EditorLayout({ children }: { children: React.ReactNode }) {
       socketClient.on("connect_failed", (error) => handleError(error.message));
 
       socketClient.emit("join-request", {
-        roomId: 12345678,
-        user: generateRandomName(),
+        roomId,
+        user: name,
       });
 
       socketClient.on("joined", (data) => {
@@ -53,6 +57,8 @@ function EditorLayout({ children }: { children: React.ReactNode }) {
       if (socketRef.current) {
         socketRef.current.off("join-request");
         socketRef.current.off("joined");
+        socketRef.current.off("connect_error");
+        socketRef.current.off("connect_failed");
         socketRef.current.disconnect();
       }
     };
@@ -60,6 +66,10 @@ function EditorLayout({ children }: { children: React.ReactNode }) {
 
   function handleLanguageChange(value: LanguageKeys) {
     setSelectedLanguage(value);
+  }
+
+  if (!name) {
+    return <Navigate to={`/?roomId=${roomId}`} />;
   }
 
   return (
