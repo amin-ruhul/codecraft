@@ -1,10 +1,14 @@
 import Modal from "../ui/modal";
 import { Button } from "../ui/button";
-import UserProfile from "../ui/UserProfile";
 import { Users } from "lucide-react";
 import { type ModalProps } from "@/lib/types";
+import { useSocketStore } from "@/store/socketStore";
 
 function Collaborators({ isOpen, onOpenChange }: ModalProps) {
+  const { users } = useSocketStore();
+
+  console.log(users);
+
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <Modal.trigger>
@@ -16,11 +20,17 @@ function Collaborators({ isOpen, onOpenChange }: ModalProps) {
         description="View and manage project collaborators."
       >
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <UserProfile name="User-1" src="https://github.com/shadcn.png" />
-            <Button variant="outline" size="sm">
-              Remove
-            </Button>
+          <div className="flex items-center justify-between flex-col max-h-[300px] overflow-y-auto">
+            {users.map((user) => (
+              <div className="flex items-center gap-2 justify-between w-full space-y-2 px-2">
+                <p className="text-primary text-sm capitalize font-semibold">
+                  {user.name}
+                </p>
+                <Button variant="outline" size="sm">
+                  Remove
+                </Button>
+              </div>
+            ))}
           </div>
         </div>
       </Modal.Content>

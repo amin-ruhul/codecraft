@@ -12,12 +12,18 @@ import { useThemeStore } from "@/store/themeStore";
 export type LanguageKeys = keyof typeof CODE_SNIPPETS;
 import EditorLayout from "@/components/layout/EditorLayout";
 import { useEditorStore } from "@/store/editorStore";
+import { Socket } from "socket.io-client";
+import { useParams, useLocation } from "react-router-dom";
+import useSocket from "@/hooks/useSocket";
+import { useEffect } from "react";
 
 function App() {
   const theme = useThemeStore((state) => state.theme);
   const selectedLanguage = useEditorStore((state) => state.selectedLanguage);
   const code = useEditorStore((state) => state.code);
   const setCode = useEditorStore((state) => state.setCode);
+  const { roomId } = useParams();
+  const location = useLocation();
 
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
@@ -31,9 +37,28 @@ function App() {
       code,
     });
   }
+  const name = location.state?.name;
+
+  const socketClient = useSocket(roomId!, name);
+  console.log(socketClient);
+
+  function handleCodeChange(value: string | undefined) {
+    if (!value) return;
+
+    setCode(value);
+    socketClient?.emit("code-change", {
+      code: value,
+    });
+  }
+
+  useEffect(() => {
+    socketClient?.on("code-change", (data) => {
+      setCode(data.code);
+    });
+  }, [socketClient]);
 
   return (
-    <EditorLayout>
+    <EditorLayout socketClient={socketClient}>
       <Allotment>
         <Allotment.Pane preferredSize="60%">
           <CodePanel
@@ -41,7 +66,7 @@ function App() {
             code={code}
             selectedLanguage={selectedLanguage}
             defaultValue={CODE_SNIPPETS[selectedLanguage]}
-            onChange={(value) => setCode(value)}
+            onChange={(value) => handleCodeChange(value)}
             theme={theme === "dark" ? "vs-dark" : "light"}
           />
         </Allotment.Pane>
