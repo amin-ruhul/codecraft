@@ -22,7 +22,10 @@ function Collaborators({ isOpen, onOpenChange }: ModalProps) {
         <div className="space-y-4">
           <div className="flex items-center justify-between flex-col max-h-[300px] overflow-y-auto">
             {users.map((user) => (
-              <div className="flex items-center gap-2 justify-between w-full space-y-2 px-2">
+              <div
+                className="flex items-center gap-2 justify-between w-full space-y-2 px-2"
+                key={user.socketId}
+              >
                 <p className="text-primary text-sm capitalize font-semibold">
                   {user.name}
                 </p>

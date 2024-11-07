@@ -12,7 +12,6 @@ import { useThemeStore } from "@/store/themeStore";
 export type LanguageKeys = keyof typeof CODE_SNIPPETS;
 import EditorLayout from "@/components/layout/EditorLayout";
 import { useEditorStore } from "@/store/editorStore";
-import { Socket } from "socket.io-client";
 import { useParams, useLocation } from "react-router-dom";
 import useSocket from "@/hooks/useSocket";
 import { useEffect } from "react";
@@ -20,8 +19,8 @@ import { useEffect } from "react";
 function App() {
   const theme = useThemeStore((state) => state.theme);
   const selectedLanguage = useEditorStore((state) => state.selectedLanguage);
-  const code = useEditorStore((state) => state.code);
-  const setCode = useEditorStore((state) => state.setCode);
+  const { code, setCode } = useEditorStore();
+
   const { roomId } = useParams();
   const location = useLocation();
 
@@ -40,21 +39,31 @@ function App() {
   const name = location.state?.name;
 
   const socketClient = useSocket(roomId!, name);
-  console.log(socketClient);
 
   function handleCodeChange(value: string | undefined) {
     if (!value) return;
 
-    setCode(value);
+    //setCode(value);
     socketClient?.emit("code-change", {
       code: value,
+      roomId,
     });
   }
 
   useEffect(() => {
-    socketClient?.on("code-change", (data) => {
-      setCode(data.code);
-    });
+    const handleCodeChange = ({ code }: { code: string }) => {
+      if (!code?.replace(/\s+/g, "")) return;
+
+      console.log("code-change", code);
+      setCode(code);
+    };
+
+    socketClient?.on("code-change", handleCodeChange);
+
+    return () => {
+      socketClient?.off("code-change", handleCodeChange);
+      socketClient?.disconnect();
+    };
   }, [socketClient]);
 
   return (
@@ -65,7 +74,6 @@ function App() {
             editorRef={editorRef}
             code={code}
             selectedLanguage={selectedLanguage}
-            defaultValue={CODE_SNIPPETS[selectedLanguage]}
             onChange={(value) => handleCodeChange(value)}
             theme={theme === "dark" ? "vs-dark" : "light"}
           />

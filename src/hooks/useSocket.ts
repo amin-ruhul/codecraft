@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 const useSocket = (roomId: string, name: string) => {
   const socketRef = useRef<Socket | null>(null);
-  const { setUsers } = useSocketStore();
+  const { setUsers, users } = useSocketStore();
 
   useEffect(() => {
     async function handleSocketConnection() {
@@ -26,9 +26,20 @@ const useSocket = (roomId: string, name: string) => {
       socketClient.on("joined", (data) => {
         console.log("joined", data);
         setUsers(data.users);
+
         if (data.user !== name) {
           toast.success(`${data.user} has joined the room.`);
         }
+      });
+
+      socketClient.on("disconnected", (data) => {
+        console.log("disconnected", data);
+        const updatedUsers = users.filter(
+          (user) => user.socketId !== data.socketId
+        );
+        setUsers(updatedUsers);
+
+        toast.success(`${data.user} is disconnected.`);
       });
     }
 

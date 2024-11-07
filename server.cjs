@@ -27,16 +27,32 @@ function getConnectedUsers(roomId) {
 }
 
 io.on("connection", (socket) => {
-  socket.on("join-request", ({ roomId, user }) => {
+  socket.on("join-request", ({ roomId, user, code }) => {
     console.log(`join - request: ${user} - ${roomId}`);
     connectedUsers[socket.id] = user;
     socket.join(roomId);
     const users = getConnectedUsers(roomId);
     io.to(roomId).emit("joined", { roomId, user, socketId: socket.id, users });
 
-    socket.on("code-change", ({ code }) => {
-      io.to(roomId).emit("code-change", { code });
+    socket.emit("code-change", { code });
+  });
+
+  socket.on("code-change", ({ code, roomId }) => {
+    io.to(roomId).emit("code-change", { code });
+  });
+
+  socket.on("disconnecting", () => {
+    const rooms = [...socket.rooms];
+    rooms.forEach((roomId) => {
+      socket.to(roomId).emit("disconnected", {
+        socketId: socket.id,
+        user: connectedUsers[socket.id],
+      });
     });
+
+    console.log(`disconnecting: ${socket.id}`);
+    delete connectedUsers[socket.id];
+    socket.leave();
   });
 });
 

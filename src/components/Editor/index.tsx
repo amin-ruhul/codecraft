@@ -7,7 +7,6 @@ export type CodeEditorProps = {
   editorRef: React.MutableRefObject<monaco.editor.IStandaloneCodeEditor | null>;
   code: string | undefined;
   selectedLanguage: LanguageKeys;
-  defaultValue: string;
   onChange: (value: string | undefined) => void;
   theme?: "vs-dark" | "light";
 };
@@ -16,7 +15,6 @@ function CodeEditor({
   editorRef,
   code,
   selectedLanguage,
-  defaultValue,
   onChange,
   theme = "vs-dark",
 }: CodeEditorProps) {
@@ -33,7 +31,6 @@ function CodeEditor({
         height="92vh"
         language={selectedLanguage}
         theme={theme}
-        defaultValue={defaultValue}
         value={code}
         onChange={(value) => onChange(value)}
         onMount={onMount}
