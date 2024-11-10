@@ -1,7 +1,6 @@
 import { Button } from "./ui/button";
 import LanguageSelector from "./ui/LanguageSelector";
 import { Moon, Sun } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { LanguageSelectorProps } from "./ui/LanguageSelector";
 
 type HeaderProps = {
@@ -26,12 +25,6 @@ function Header({ theme, onThemeChange, ...rest }: HeaderProps) {
             <Moon className="h-4 w-4" />
           )}
         </Button>
-        <div className="flex -space-x-2">
-          <Avatar className="border-2 border-white dark:border-gray-800">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@user1" />
-            <AvatarFallback>U1</AvatarFallback>
-          </Avatar>
-        </div>
       </div>
     </header>
   );

@@ -11,6 +11,7 @@ import OutputPanel from "./components/OutputPanel";
 import Footer from "./components/Footer";
 import { initSocket } from "./services/socket";
 import { Socket } from "socket.io-client";
+import { generateRandomName } from "./lib/utils";
 
 export type LanguageKeys = keyof typeof CODE_SNIPPETS;
 
@@ -26,19 +27,6 @@ function App() {
   const { output, execute } = useCodeExecution();
 
   const socketRef = useRef<Socket | null>(null);
-
-  function generateRandomName() {
-    const letters = "abcdefghijklmnopqrstuvwxyz";
-    const nameLength = Math.floor(Math.random() * 3) + 3;
-    let name = "";
-
-    for (let i = 0; i < nameLength; i++) {
-      const randomIndex = Math.floor(Math.random() * letters.length);
-      name += letters[randomIndex];
-    }
-
-    return name.charAt(0).toUpperCase() + name.slice(1);
-  }
 
   useEffect(() => {
     async function handleSocketConnection() {
