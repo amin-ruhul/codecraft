@@ -24,7 +24,7 @@ type EditorSettingStore = {
 
 export const useEditorSettingStore = create<EditorSettingStore>((set) => ({
   fontSize: 16,
-  cursorStyle: "underline",
+  cursorStyle: "line",
   wordWrap: "off",
   wordBreak: "normal",
   setFontSize: (fontSize) => set({ fontSize }),
