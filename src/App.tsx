@@ -24,7 +24,7 @@ function App() {
   const [selectedLanguage, setSelectedLanguage] =
     useState<LanguageKeys>("javascript");
 
-  const { output, execute } = useCodeExecution();
+  const { output, execute, isLoading } = useCodeExecution();
 
   const socketRef = useRef<Socket | null>(null);
 
@@ -99,7 +99,11 @@ function App() {
                 />
               </Allotment.Pane>
               <Allotment.Pane snap preferredSize="30%">
-                <OutputPanel output={output} onEducate={handleCodeExecution} />
+                <OutputPanel
+                  output={output}
+                  onEducate={handleCodeExecution}
+                  isCodeExecuting={isLoading}
+                />
               </Allotment.Pane>
             </Allotment>
           </div>
